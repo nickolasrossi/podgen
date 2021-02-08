@@ -1,9 +1,6 @@
 ### podgen ###
 
-##### What and why #####
-
-`podgen` is a crucial tool that takes a capnproto schema definition (a `*.capnp` file) and
-generates:
+`podgen` is a tool that takes a capnproto schema definition (a `*.capnp` file) and generates:
  
 * an equivalent C++ POD (plain old data type as a struct) for each struct in the capnproto schema
 * converter functions that copy the data both directions between a capnproto Builder/Reader and the POD
