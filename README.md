@@ -67,6 +67,7 @@ Some capnproto things that podgen does not handle:
 * [AnyPointer](https://capnproto.org/language.html#dynamically-typed-fields)
 * anonymous union nested inside another anonymous union
 
+Note that C++17 is currently required due to the generation of `std::variant` and `std::optional`.
 
 ##### Header files #####
 
