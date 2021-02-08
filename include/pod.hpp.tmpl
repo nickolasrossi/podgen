@@ -1,0 +1,152 @@
+#pragma once
+
+#include <functional>
+#include "defs.hpp"
+
+{{import_pods}}
+
+{{namespace_start}}
+
+{{schema}}
+
+constexpr size_t MAX_CONTAINER_PRINT = 256;
+
+/// default output function
+template <typename T, typename std::enable_if<podgen::is_outputtable<T>::value, T>::type* = nullptr>
+void _out(std::ostream& os, const T& o) {
+    if constexpr (std::is_same<T, int8_t>::value) {
+        os << (int16_t) o;
+    } else if constexpr (std::is_same<T, uint8_t>::value) {
+        os << (uint16_t) o;
+    } else if constexpr (std::is_same<T, std::string>::value) {
+        os << '"' << o << '"';
+    } else {
+        os << o;
+    }
+}
+
+/// output monostate
+inline void _out(std::ostream& os, const std::monostate& ms) {
+    os << "void";
+}
+
+/// output Data type
+inline void _out(std::ostream& os, const podgen::Data& data) {
+    char buf[3];
+
+    os << "(" << data.size() << ")[";
+
+    size_t n = 0;
+    for (auto& b : data) {
+        if (n > 0) {
+            os << ' ';
+        }
+
+        uint8_t c = static_cast<uint8_t>(b);
+        sprintf(buf, "%02x", c);
+        os << buf;
+
+        if (n++ >= MAX_CONTAINER_PRINT) {
+            os << " ..." << data.size() - n << " more";
+            break;
+        }
+    }
+
+    os << ']';
+}
+
+template <typename C,
+        typename std::enable_if<podgen::is_container<C>::value, C>::type* = nullptr>
+void _out(std::ostream& os, const C& c);
+
+template <typename A, typename B>
+void _out(std::ostream& os, const std::pair<A, B>& t);
+
+template <typename... Args>
+void _out(std::ostream& os, const std::variant<Args...>& v);
+
+template <typename T>
+void _out(std::ostream& os, const std::optional<T>& o);
+
+template <typename T>
+void _out_adl(std::ostream& os, const T& o);
+
+{{output}}
+
+/// output any container that doesn't already have an operator<<
+template <typename C,
+          typename std::enable_if<podgen::is_container<C>::value, C>::type*>
+void _out(std::ostream& os, const C& c) {
+    bool first = true;
+    if (c.size() > 16) {
+        os << '(' << c.size() << ')';
+    }
+    os << '[';
+    size_t n = 0;
+
+    for (const auto& o : c) {
+        if (!first) {
+            os << ", ";
+        }
+
+        if constexpr (std::experimental::is_detected<podgen::is_pair, decltype(o)>::value) {
+            // special case for maps
+            os << '{';
+            {{namespace}}::_out_adl(os, o.first);
+            os << " -> ";
+            {{namespace}}::_out_adl(os, o.second);
+            os << '}';
+        } else {
+            {{namespace}}::_out_adl(os, o);
+        }
+        first = false;
+
+        if (n++ >= MAX_CONTAINER_PRINT) {
+            os << ", ..." << c.size() - n << " more";
+            break;
+        }
+    }
+
+    os << ']';
+}
+
+/// output any pair
+template <typename A, typename B>
+void _out(std::ostream& os, const std::pair<A, B>& t) {
+    os << '{';
+    {{namespace}}::_out_adl(os, t.first);
+    os << ", ";
+    {{namespace}}::_out_adl(os, t.second);
+    os << '}';
+}
+
+/// output any variant
+template <typename... Args>
+void _out(std::ostream& os, const std::variant<Args...>& v) {
+    std::visit([&os](const auto& e) -> void { {{namespace}}::_out_adl(os, e); }, v);
+}
+
+template <typename T>
+void _out(std::ostream& os, const std::optional<T>& o) {
+    if (o) {
+        {{namespace}}::_out_adl(os, *o);
+    } else {
+        os << "{}";
+    }
+}
+
+template <typename T>
+void _out_adl(std::ostream& os, const T& o) {
+    if constexpr (podgen::is_ambiguous_adl<T>::value) {
+        {{namespace}}::_out(os, o);
+    } else {
+        _out(os, o);
+    }
+}
+
+{{namespace_end}}
+
+namespace std {
+
+{{hash}}
+}
