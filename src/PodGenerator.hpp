@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <variant>
 #include <optional>
+#include <functional>
 
 #include <capnp/schema-parser.h>
 

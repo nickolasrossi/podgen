@@ -17,7 +17,7 @@ add_executable(podgen
 
 target_compile_features(podgen PRIVATE cxx_std_17)
 
-include_directories(podgen ${CAPNP_INCLUDE_DIRS})
+include_directories(podgen ${CAPNP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/include)
 
 target_link_libraries(podgen ${CAPNP_LIBRARIES} ${CAPNPC_LIBRARY})
 
