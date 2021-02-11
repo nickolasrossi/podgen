@@ -1147,7 +1147,7 @@ void generateEnum(PodGenStream& gs, ::capnp::EnumSchema schema) {
     auto enumerants = schema.getEnumerants();
 
     char idHex[17];
-    sprintf(idHex, "%016llx", id);
+    sprintf(idHex, "%016llx", (long long)id);
 
     std::string alias = std::string(name) + "_" + idHex;
 
@@ -1413,7 +1413,7 @@ void generateOutputEnumFunction(PodGenStream& gs, ::capnp::EnumSchema schema, ::
         auto id = schema.getProto().getId();
 
         char idHex[17];
-        sprintf(idHex, "%016llx", id);
+        sprintf(idHex, "%016llx", (long long)id);
 
         std::string alias = std::string(name) + "_" + idHex;
         gs.startNamespace(alias);

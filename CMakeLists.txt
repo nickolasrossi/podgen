@@ -16,10 +16,8 @@ add_executable(podgen
     ${CAPNP_SRCS})
 
 target_compile_features(podgen PRIVATE cxx_std_17)
-
-include_directories(podgen ${CAPNP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/include)
-
-target_link_libraries(podgen ${CAPNP_LIBRARIES} ${CAPNPC_LIBRARY})
+target_include_directories(podgen PRIVATE ${CAPNP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/include)
+target_link_libraries(podgen PRIVATE ${CAPNP_LIBRARIES} ${CAPNPC_LIBRARY})
 
 file(GLOB include_files "${CMAKE_CURRENT_SOURCE_DIR}/include/*")
 add_custom_target(copy_templates
@@ -43,9 +41,9 @@ function(capnp_generate_pod_cpp target_name)
         list(APPEND outputs "${base_dir}/${src_base}.convert.hpp" "${base_dir}/${src_base}.convert.cpp")
     endforeach ()
     add_custom_command(OUTPUT ${outputs}
-            COMMAND podgen ${ARGN} -c "${CAPNP_INCLUDE_DIRECTORY}" -t "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/include" -o "${base_dir}"
+            COMMAND $<TARGET_FILE:podgen> ${ARGN} -c "${CAPNP_INCLUDE_DIRECTORY}" -t "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/include" -o "${base_dir}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-            DEPENDS ${ARGN}
+            DEPENDS ${ARGN} $<TARGET_FILE:podgen>
             VERBATIM)
 
     add_library(${target_name} STATIC EXCLUDE_FROM_ALL ${outputs} ${CAPNP_SRCS})
