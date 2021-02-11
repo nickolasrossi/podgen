@@ -18,6 +18,12 @@ fs::path resolvePath(fs::path from, const fs::path& path) {
     return from;
 }
 
+static std::string canonPath(std::string_view path) {
+    char *p = realpath(path.data(), nullptr);
+    KJ_DEFER(free(p));
+    return std::string(p);
+}
+
 int main(int argc, char** argv) {
     if (argc <= 1) {
         std::cerr << "Usage: podgen [schemas...] -t template_dir -o output_dir -c capnp_root_dir" << std::endl;
@@ -31,11 +37,11 @@ int main(int argc, char** argv) {
 
     for (int i = 1; i < argc; i++) {
         if (i < argc - 1 && strcmp(argv[i], "-o") == 0) {
-            outputRoot = argv[++i];
+            outputRoot = canonPath(argv[++i]);
         } else if (i < argc - 1 && strcmp(argv[i], "-c") == 0) {
-            capnpRoot = argv[++i];
+            capnpRoot = canonPath(argv[++i]);
         } else if (i < argc - 1 && strcmp(argv[i], "-t") == 0) {
-            templateRoot = argv[++i];
+            templateRoot = canonPath(argv[++i]);
         } else {
             inputs.emplace_back(argv[i]);
         }
@@ -105,7 +111,9 @@ int main(int argc, char** argv) {
         for (auto& [alias, import] : getImportsFromCapnp(capnpFile)) {
             fs::path p = capnpFile.parent_path();
 
-            if (import[0] == '/') {
+            if (import.rfind("/capnp/", 0) == 0) {
+                continue;
+            } else if (import[0] == '/') {
                 p = import.substr(1);
             } else {
                 p = resolvePath(p, import);

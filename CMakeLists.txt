@@ -21,8 +21,10 @@ include_directories(podgen ${CAPNP_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}/inc
 
 target_link_libraries(podgen ${CAPNP_LIBRARIES} ${CAPNPC_LIBRARY})
 
+file(GLOB include_files "${CMAKE_CURRENT_SOURCE_DIR}/include/*")
 add_custom_target(copy_templates
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/include ${CMAKE_CURRENT_BINARY_DIR}/include
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${include_files} ${CMAKE_CURRENT_BINARY_DIR}/include
 )
 add_dependencies(podgen copy_templates)
 
+add_subdirectory(example)
