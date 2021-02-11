@@ -27,6 +27,9 @@ add_custom_target(copy_templates
 )
 add_dependencies(podgen copy_templates)
 
+find_library(CCTZ_LIB cctz REQUIRED)
+find_path(CCTZ_INCLUDE cctz/time_zone.h REQUIRED)
+
 function(capnp_generate_pod_cpp target_name)
     set(base_dir "${CMAKE_CURRENT_BINARY_DIR}/pod_autogen")
 
@@ -46,11 +49,10 @@ function(capnp_generate_pod_cpp target_name)
             VERBATIM)
 
     add_library(${target_name} STATIC EXCLUDE_FROM_ALL ${outputs} ${CAPNP_SRCS})
-    target_include_directories(${target_name} PUBLIC "${base_dir}" "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/include")
-    target_link_libraries(${target_name} PUBLIC CapnProto::capnp)
+    target_include_directories(${target_name} PUBLIC "${base_dir}" "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/include" ${CCTZ_INCLUDE})
+    target_link_libraries(${target_name} PUBLIC CapnProto::capnp ${CCTZ_LIB})
     target_compile_features(${target_name} PUBLIC cxx_std_17)
 endfunction()
-
 
 add_subdirectory(example)
 add_subdirectory(test)

@@ -49,6 +49,7 @@ TEST_CASE("constants", "podgen") {
     REQUIRE(Simple::choice == Choice::B);
 }
 
+// No definition for messageToStringBuffer or podToCapn4
 #if 0
 TEST_CASE("to buffer", "podgen") {
     using namespace test;
@@ -116,6 +117,8 @@ TEST_CASE("output", "podgen") {
     CHECK(ss.str() == "{[\"there\", \"is\", \"who\"], [\"what\", \"is\", \"that\"]}");
     std::cout << ss.str() << std::endl;
 
+    // Can't rely on unordered_map's ordering
+#if 0
     std::unordered_map<std::string, std::string> s;
     s.emplace("a", "hey");
     s.emplace("b", "what");
@@ -125,6 +128,7 @@ TEST_CASE("output", "podgen") {
     _out(ss, s);
     CHECK(ss.str() == "[{\"b\" -> \"what\"}, {\"c\" -> \"knock\"}, {\"a\" -> \"hey\"}]");
     std::cout << ss.str() << std::endl;
+#endif
 
     std::vector<Data> v;
     v.push_back(Data { std::byte(0x44) });
@@ -167,6 +171,7 @@ TEST_CASE("custom lists", "podgen") {
     ls.nlist.insert(Name { .id = 6, .name = "sei" });
     ls.nlist.insert(Name { .id = 8, .name = "otto" });
 
+    // rlist contains names..
 #if 0
     ls.rlist.emplace_back(4, 5, 5);
     ls.rlist.emplace_back(2, 9, 1);
