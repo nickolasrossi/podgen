@@ -1,6 +1,6 @@
 @0x9e773be01926aace;
 
-using Cxx = import "/c++.capnp";
+using Cxx = import "/capnp/c++.capnp";
 $Cxx.namespace("inc::capnp");
 
 struct Point {

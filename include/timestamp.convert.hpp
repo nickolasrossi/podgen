@@ -16,7 +16,7 @@
 namespace podgen {
 
 using timestamp_clock = std::chrono::system_clock;
-using Timestamp = std::chrono::time_point<timestamp_clock>;
+using Timestamp = std::chrono::time_point<timestamp_clock, std::chrono::nanoseconds>;
 
 /// Some ugliness to find the system time zone.
 /// It's either the contents of /etc/timezone, or a symlink from /etc/timezone into /usr/share/zoneinfo.
@@ -52,13 +52,11 @@ inline cctz::time_zone getSystemTimeZone() {
 }
 
 inline Timestamp timestampFromNanos(uint64_t value) {
-    // system clock doesn't construct from nanoseconds
-    std::chrono::microseconds dur(value / 1000 + ((value % 1000) >= 500 ? 1 : 0));
-    return Timestamp(dur);
+    return Timestamp(std::chrono::nanoseconds(value));
 }
 
 inline uint64_t timestampToNanos(const Timestamp& timestamp) {
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(timestamp.time_since_epoch()).count();
+    return timestamp.time_since_epoch().count();
 }
 
 inline void outTimestamp(std::ostream& os, const Timestamp& o) {

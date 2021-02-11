@@ -38,9 +38,9 @@ void podToCapnp(::test::capnp::Vector3d::Builder b, const Eigen::Vector3d& obj) 
 /// Implement a meaningful hash function
 std::size_t std::hash<Eigen::Vector3d>::operator()(const Eigen::Vector3d& o) const {
     std::size_t s = 0;
-    s = ::messaging::capnp::hashCombine(s, o(0));
-    s = ::messaging::capnp::hashCombine(s, o(1));
-    s = ::messaging::capnp::hashCombine(s, o(2));
+    s = ::podgen::hashCombine(s, o(0));
+    s = ::podgen::hashCombine(s, o(1));
+    s = ::podgen::hashCombine(s, o(2));
     return s;
 };
 
