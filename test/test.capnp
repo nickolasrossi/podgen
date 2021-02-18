@@ -156,24 +156,24 @@ struct Container {
 }
 
 # external type example
-#struct Vector3d $Pod.external(type="Eigen::Vector3d", hdr="third_party/eigen/Eigen/Core") {
-#    x   @0 : Float64;
-#    y   @1 : Float64;
-#    z   @2 : Float64;
-#}
+struct Vector3d $Pod.external(type="Eigen::Vector3d", hdr="Eigen/Core") {
+    x   @0 : Float64;
+    y   @1 : Float64;
+    z   @2 : Float64;
+}
 
 # demonstrates including an external type in another pod
-#struct Pose {
-#    nanos           @0 : UInt64 $Pod.defaultValue(value="podgen::timestampToNanos(std::chrono::system_clock::now())", hdr="<chrono>");
-#    timestamp       @1 : UInt64 $Pod.converter(Pod.timestamp);
-#    translation     @2 : Vector3d;
-#    rotation        @3 : Vector3d;
-#    point           @4 : Include.Point;
-#    times : group {
-#        start       @5 : UInt64 $Pod.converter(Pod.timestamp);
-#        end         @6 : UInt64 $Pod.converter(Pod.timestamp);
-#    }
-#}
+struct Pose {
+    nanos           @0 : UInt64 $Pod.defaultValue(value="podgen::timestampToNanos(std::chrono::system_clock::now())", hdr="<chrono>");
+    timestamp       @1 : UInt64 $Pod.converter(Pod.timestamp);
+    translation     @2 : Vector3d;
+    rotation        @3 : Vector3d;
+    point           @4 : Include.Point;
+    times : group {
+        start       @5 : UInt64 $Pod.converter(Pod.timestamp);
+        end         @6 : UInt64 $Pod.converter(Pod.timestamp);
+    }
+}
 
 # demonstrates custom container types for capnp lists.
 # T, K, V in the type templates are specially recognized:

@@ -18,7 +18,7 @@ test::Simple buildSimple() {
     simple.float_ = 5.55f;
     simple.double_ = -88.8888;
     simple.string = "whatastring";
-    simple.data = messaging::capnp::Data{std::byte{0xaa}, std::byte{0xbb}, std::byte{0xcc}, std::byte{0xdd}, std::byte{0xee}};
+    simple.data = ::podgen::Data{std::byte{0xaa}, std::byte{0xbb}, std::byte{0xcc}, std::byte{0xdd}, std::byte{0xee}};
     simple.enumer = test::Choice::B;
     simple.list = std::vector<std::string>{"qq", "rr", "ss", "tt"};
     simple.obj.id = 11111;
