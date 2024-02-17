@@ -4,6 +4,7 @@
 #include <string>
 #include <optional>
 #include <unordered_set>
+#include <limits>
 
 #include <capnp/schema.h>
 
