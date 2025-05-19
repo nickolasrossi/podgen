@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
         };
 
         ::capnp::SchemaParser parser;
-        info.schema = parser.parseFromDirectory(fs->getCurrent(), kj::Path::parse(capnpFile), importPaths);
+        info.schema = parser.parseFromDirectory(fs->getCurrent(), kj::Path::parse(capnpFile.c_str()), importPaths);
 
         auto namesp = getNamespace(info.schema);
         if (!namesp.empty()) {
@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
 
             try {
                 std::cout << p << std::endl;
-                auto importSchema = parser.parseFromDirectory(fs->getCurrent(), kj::Path::parse(p), importPaths);
+                auto importSchema = parser.parseFromDirectory(fs->getCurrent(), kj::Path::parse(p.c_str()), importPaths);
                 auto ns = getNamespace(importSchema);
                 std::cout << "  parsed import " << import;
                 if (!ns.empty()) {
